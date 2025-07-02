@@ -3,536 +3,688 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายการบอร์ดเกมของชมรมบอร์ดเกมและหมากกระดาน</title>
-    <link rel="icon" type="image/png" href="https://placehold.co/32x32/3b82f6/ffffff?text=LOGO">
+    <title>ระบบรายการบอร์ดเกม</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Base styles */
         body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f3f4f6; /* gray-100 */
-            transition: background-color 0.3s ease;
+            font-family: 'Mitr', sans-serif;
+            background-color: #EDE9FE; /* violet-100 */
         }
-        .card, .control-panel, .modal-container {
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+        .aspect-w-16 { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; }
+        .aspect-w-16 > iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .thumbnail {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .thumbnail.active, .thumbnail:hover {
+            border-color: #818CF8; /* indigo-400 */
         }
-        .modal-video {
-            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;
-        }
-        .modal-video iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        }
-        .filter-btn.active {
-            background-color: #2563eb; /* blue-600 */
-            color: white;
-        }
-        select {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-            background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem;
-        }
-        .gallery-thumbnail.active {
-            border-color: #3b82f6; /* blue-500 */
-            opacity: 1;
-        }
-
-        /* Dark mode styles */
-        .dark body {
-            background-color: #111827; /* gray-900 */
-        }
-        .dark .control-panel, .dark .card, .dark .modal-container {
-            background-color: #1f2937; /* gray-800 */
-            border-color: #374151; /* gray-700 */
-        }
-        .dark .text-color-primary { color: #d1d5db; /* gray-300 */ }
-        .dark .text-color-secondary { color: #9ca3af; /* gray-400 */ }
-        .dark .input-bg { background-color: #374151; /* gray-700 */ }
-        .dark .info-box { background-color: #374151; /* gray-700 */ }
-        .dark .modal-footer-bg { background-color: #374151; /* gray-700 */ border-top-color: #4b5563; }
-        .dark select {
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-             color: #d1d5db; /* gray-300 */
+        .input-field::placeholder {
+            color: #9CA3AF; /* gray-400 */
+            opacity: 1; /* Firefox */
         }
     </style>
 </head>
 <body>
 
-    <div id="mainApp" class="container mx-auto p-4 md:p-6">
-        <div class="control-panel bg-white p-4 rounded-xl shadow-md mb-6 sticky top-4 z-10">
-            <!-- [CHANGED] Restructured Header Layout -->
-            <!-- Top Row -->
-            <div class="flex justify-between items-center gap-4">
-                <!-- Left: Logo and Title -->
-                <div class="flex items-center gap-3">
-                    <img src="https://scontent.fbkk12-5.fna.fbcdn.net/v/t39.30808-6/514589111_689431527587902_7224037195547545665_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=1x06Jq8b4xwQ7kNvwFl2G5N&_nc_oc=AdmyDnucRGuYqd6gzLjVbFpYoRKbLrF4QjA2OJB6_DE-5WIXg1NXEirCWF_dsDnvqkr2ThnOumNmusPnYufTTF9m&_nc_zt=23&_nc_ht=scontent.fbkk12-5.fna&_nc_gid=lSMg2CXZRHYsLtTbnimJ2A&oh=00_AfOUtAWdAGHrRBDeAXDGQoEq6pA37ZXuGdCJWE50yQQHAA&oe=68685B2E" alt="โลโก้ชมรม" class="w-14 h-14 rounded-full object-cover shadow-md">
-                    <h2 class="text-xl md:text-2xl font-bold text-color-primary text-gray-700 whitespace-nowrap">ชมรมบอร์ดเกมและหมากกระดาน</h2>
+    <!-- Main Content -->
+    <div class="main-content p-4 sm:p-8">
+        <!-- Home Page -->
+        <div id="home-page">
+            <header class="flex flex-wrap justify-between items-center mb-4 gap-4">
+                <div class="flex items-center gap-4">
+                    <img src="https://i.postimg.cc/w7Vbg4JF/image.png" alt="โลโก้ชมรม" class="w-14 h-14 rounded-full object-cover shadow-md">
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-semibold text-gray-800">รายการบอร์ดเกมของชมรม</h1>
+                        <p class="text-gray-600 text-lg">ชมรมบอร์ดเกมและหมากกระดาน</p>
+                        <p class="text-orange-600 font-semibold mt-1 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            <span>หากไม่แสดงรายการบอร์ดเกม ให้กด "เรียกดูข้อมูลล่าสุด"</span>
+                        </p>
+                    </div>
                 </div>
-                <!-- Right: Refresh and Theme Toggle -->
-                <div class="flex items-center gap-2">
-                    <button id="fetchDataBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors flex-shrink-0">
-                        🔄 เรียกข้อมูลใหม่
+                <div class="flex items-center gap-4">
+                    <a href="https://www.facebook.com/profile.php?id=100095631816278&locale=th_TH" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300 flex items-center gap-2" title="เพจ Facebook ของชมรม">
+                        <i class="fab fa-facebook-square"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <button id="fetch-data-home" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i> เรียกดูข้อมูลล่าสุด
                     </button>
-                    <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
-                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 12.02l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414-1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    <button id="go-to-admin-btn" class="bg-gray-700 hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300">
+                        <i class="fas fa-user-shield mr-2"></i> ผู้ดูแลระบบ
                     </button>
+                </div>
+            </header>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 p-4 bg-white rounded-lg shadow-md">
+                <div>
+                    <label for="filter-category" class="block text-sm font-medium text-gray-600 mb-1">หมวดหมู่</label>
+                    <select id="filter-category" class="w-full p-2 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+                </div>
+                <div>
+                    <label for="filter-difficulty" class="block text-sm font-medium text-gray-600 mb-1">ระดับความยาก</label>
+                    <select id="filter-difficulty" class="w-full p-2 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+                </div>
+                <div>
+                    <label for="filter-players" class="block text-sm font-medium text-gray-600 mb-1">จำนวนผู้เล่น</label>
+                    <select id="filter-players" class="w-full p-2 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">ทั้งหมด</option>
+                        <option value="2">2 คน</option>
+                        <option value="3">3 คน</option>
+                        <option value="4">4 คน</option>
+                        <option value="5">5 คน</option>
+                        <option value="6">6 คน</option>
+                        <option value="7">7 คน</option>
+                        <option value="8">8 คน</option>
+                        <option value="10">10+ คน</option>
+                    </select>
+                </div>
+                 <div class="relative">
+                    <label for="search-input" class="block text-sm font-medium text-gray-600 mb-1">ค้นหาด้วยชื่อ</label>
+                    <input type="text" id="search-input" placeholder="ค้นหา..." class="input-field w-full p-2 pl-8 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span class="absolute top-9 left-0 flex items-center pl-2"><i class="fas fa-search text-gray-500"></i></span>
                 </div>
             </div>
-            <!-- Bottom Row -->
-            <div class="flex justify-between items-center gap-4 mt-4">
-                <!-- Left: Search -->
-                <div class="flex-grow">
-                    <input type="text" id="searchInput" placeholder="ค้นหาชื่อเกม... 🔍" class="input-bg w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white">
+
+            <div id="game-list-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
+        </div>
+
+        <!-- Admin Page -->
+        <div id="admin-page" class="hidden">
+             <header class="flex flex-wrap justify-between items-center mb-8 gap-4">
+                <div class="flex items-center gap-4">
+                    <img src="https://i.postimg.cc/w7Vbg4JF/image.png" alt="โลโก้ชมรม" class="w-14 h-14 rounded-full object-cover shadow-md">
+                    <div>
+                        <h1 class="text-3xl sm:text-4xl font-semibold text-gray-800">หน้าผู้ดูแลระบบ</h1>
+                        <p class="text-gray-600">จัดการข้อมูลบอร์ดเกม</p>
+                    </div>
                 </div>
-                <!-- Right: Filter Button -->
-                <div class="flex-shrink-0">
-                     <button id="openFilterBtn" class="bg-white border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors input-bg text-color-primary">
-                        ตัวกรอง ☰
-                    </button>
+                <div class="flex items-center gap-4">
+                     <button id="go-to-home-from-admin" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300"><i class="fas fa-home mr-2"></i> กลับหน้าแรก</button>
+                    <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300 hidden"><i class="fas fa-sign-out-alt mr-2"></i> ออกจากระบบ</button>
+                </div>
+            </header>
+
+            <div id="password-prompt" class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
+                <h2 class="text-2xl font-semibold mb-4 text-center text-gray-800">เข้าสู่ระบบผู้ดูแล</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="username-input" class="block text-sm font-medium text-gray-600">ชื่อผู้ใช้งาน</label>
+                        <input type="text" id="username-input" class="input-field w-full p-2 border border-gray-200 rounded mt-1 bg-violet-100 text-gray-800" placeholder="ชื่อผู้ใช้...">
+                    </div>
+                    <div>
+                        <label for="password-input" class="block text-sm font-medium text-gray-600">รหัสผ่าน</label>
+                        <input type="password" id="password-input" class="input-field w-full p-2 border border-gray-200 rounded mt-1 bg-violet-100 text-gray-800" placeholder="รหัสผ่าน...">
+                    </div>
+                </div>
+                <button id="password-submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg mt-6">เข้าสู่ระบบ</button>
+                <p id="password-error" class="text-red-500 mt-2 text-center hidden">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!</p>
+            </div>
+
+            <div id="admin-content" class="hidden">
+                <div class="mb-6 flex flex-col sm:flex-row gap-4">
+                    <button id="show-add-form-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"><i class="fas fa-plus-circle mr-2"></i> เพิ่มบอร์ดเกมใหม่</button>
+                    <div class="relative flex-grow">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3"><i class="fas fa-search text-gray-500"></i></span>
+                        <input type="text" id="admin-search-input" placeholder="ค้นหาเกมในตารางเพื่อแก้ไข..." class="input-field w-full p-2 pl-10 border border-gray-200 rounded-lg shadow-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex space-x-4 mb-6">
+                     <button id="force-save-to-sheet" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-300"><i class="fas fa-cloud-upload-alt mr-2"></i> บังคับ Sync ข้อมูลทั้งหมด</button>
+                    <button id="fetch-from-sheet-admin" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-300"><i class="fas fa-sync-alt mr-2"></i> เรียกดูข้อมูลจาก Google Sheet</button>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">รายการบอร์ดเกมทั้งหมด</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-violet-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">ชื่อเกม</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">หมวดหมู่</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">ความยาก</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">ผู้เล่น</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></div>
+        <!-- Details Page -->
+        <div id="details-page" class="hidden">
+            <header class="flex justify-between items-center mb-6">
+                <h1 id="details-title" class="text-3xl sm:text-4xl font-semibold text-gray-800"></h1>
+                <button id="go-to-home-from-details" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-300"><i class="fas fa-arrow-left mr-2"></i> กลับหน้าหลัก</button>
+            </header>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="space-y-6">
+                    <div id="details-image-gallery">
+                        <img id="details-main-image" src="" alt="Game Image" class="w-full h-auto max-h-96 object-contain rounded-lg shadow-md mb-4 bg-violet-100">
+                        <div id="details-thumbnail-container" class="flex gap-2 flex-wrap justify-center"></div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                        <div class="p-4 rounded-lg" style="background-color: #fef9c3;"><h4 class="text-sm font-semibold text-gray-500 mb-1">จำนวนผู้เล่น</h4><p id="details-players" class="text-xl font-bold text-gray-800 flex items-center justify-center gap-2"></p></div>
+                        <div class="p-4 rounded-lg" style="background-color: #dcfce7;"><h4 class="text-sm font-semibold text-gray-500 mb-1">ความยาก</h4><p id="details-difficulty" class="text-xl font-bold"></p></div>
+                        <div class="p-4 rounded-lg" style="background-color: #fce7f3;"><h4 class="text-sm font-semibold text-gray-500 mb-1">หมวดหมู่</h4><p id="details-category" class="text-xl font-bold text-gray-800 flex items-center justify-center gap-2"></p></div>
+                        <div class="p-4 rounded-lg" style="background-color: #e0f2fe;"><h4 class="text-sm font-semibold text-gray-500 mb-1">ภาษา</h4><p id="details-language" class="text-xl font-bold text-gray-800 flex items-center justify-center gap-2"></p></div>
+                        <div class="p-4 rounded-lg" style="background-color: #f3f4f6;"><h4 class="text-sm font-semibold text-gray-500 mb-1">เจ้าของ</h4><p id="details-owner" class="text-xl font-bold text-gray-800 flex items-center justify-center gap-2"></p></div>
+                        <div class="p-4 rounded-lg" style="background-color: #f5f3ff;"><h4 class="text-sm font-semibold text-gray-500 mb-1">ที่จัดเก็บ</h4><p id="details-location" class="text-xl font-bold text-gray-800 flex items-center justify-center gap-2"></p></div>
+                    </div>
+                    <div><h4 class="text-xl font-semibold text-gray-800 mb-2">คำอธิบาย</h4><p id="details-description" class="text-gray-600 whitespace-pre-wrap bg-violet-100 p-3 rounded-md"></p></div>
+                    <div id="details-youtube-container" class="hidden"><h4 class="text-xl font-semibold text-gray-800 mb-2">วิดีโอวิธีเล่น</h4><div id="details-youtube" class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg"></div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Game Details Modal -->
-    <div id="gameModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div id="modalContent" class="modal-container bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"></div>
-    </div>
-    
-    <!-- Filter Modal -->
-    <div id="filterModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div class="modal-container bg-white rounded-2xl shadow-2xl w-full max-w-md">
+    <!-- Form Modal -->
+    <div id="form-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-full overflow-y-auto">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold text-color-primary text-gray-800">ตัวกรอง</h3>
-                    <button id="closeFilterBtn" class="text-gray-400 hover:text-gray-600 text-3xl">&times;</button>
+                    <h2 id="form-title" class="text-2xl font-semibold text-gray-800"></h2>
+                    <button id="form-modal-close" class="text-gray-600 hover:text-gray-800 text-2xl">×</button>
                 </div>
-                <div class="space-y-6">
-                    <div>
-                        <label class="font-semibold text-color-primary text-gray-700 mb-2 block">หมวดหมู่</label>
-                        <div id="categoryFilters" class="flex flex-wrap gap-2"></div>
+                <form id="game-form" class="space-y-4">
+                    <input type="hidden" id="original-game-name">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label for="name" class="block text-sm font-medium text-gray-600">ชื่อบอร์ดเกม (ห้ามซ้ำ)</label><input type="text" id="name" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800" required></div>
+                        
+                        <div>
+                            <label for="category-select" class="block text-sm font-medium text-gray-600">หมวดหมู่</label>
+                            <select id="category-select" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </select>
+                            <div id="category-custom-wrapper" class="hidden mt-2">
+                                <label for="category-custom-input" class="block text-sm font-medium text-gray-600">กรอกหมวดหมู่ใหม่:</label>
+                                <input type="text" id="category-custom-input" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800">
+                            </div>
+                        </div>
+
+                        <div><label for="difficulty" class="block text-sm font-medium text-gray-600">ระดับความยาก</label><input type="text" id="difficulty" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800" required></div>
+                        <div><label for="players" class="block text-sm font-medium text-gray-600">จำนวนผู้เล่น</label><input type="text" id="players" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800" required></div>
+                        <div><label for="language" class="block text-sm font-medium text-gray-600">ภาษา</label><input type="text" id="language" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></div>
+                        <div><label for="owner" class="block text-sm font-medium text-gray-600">เจ้าของ</label><input type="text" id="owner" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></div>
+                        <div class="md:col-span-2"><label for="location" class="block text-sm font-medium text-gray-600">ที่อยู่/ที่จัดเก็บ</label><input type="text" id="location" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></div>
+                        
+                        <div class="md:col-span-2">
+                            <label for="image" class="block text-sm font-medium text-gray-600">URL รูปภาพ (ใส่หนึ่ง URL ต่อหนึ่งบรรทัด)</label>
+                            <textarea id="image" rows="4" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea>
+                        </div>
+                        <div class="md:col-span-2"><label for="description" class="block text-sm font-medium text-gray-600">คำอธิบาย</label><textarea id="description" rows="3" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></textarea></div>
+                        <div class="md:col-span-2"><label for="youtube" class="block text-sm font-medium text-gray-600">ลิงก์วิดีโอ YouTube</label><input type="url" id="youtube" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></div>
                     </div>
-                    <div>
-                        <label for="difficultyFilter" class="font-semibold text-color-primary text-gray-700 mb-2 block">ความยาก</label>
-                        <select id="difficultyFilter" class="input-bg text-color-primary w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancel-edit" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">ยกเลิก</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">บันทึกข้อมูล</button>
                     </div>
-                    <div>
-                        <label for="playerFilter" class="font-semibold text-color-primary text-gray-700 mb-2 block">จำนวนผู้เล่นสูงสุด</label>
-                        <select id="playerFilter" class="input-bg text-color-primary w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer-bg bg-gray-50 p-4 flex justify-end gap-4 rounded-b-2xl border-t">
-                <button id="resetFiltersBtn" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">ล้างตัวกรอง</button>
-                <button id="applyAndCloseFilterBtn" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">เสร็จสิ้น</button>
+                </form>
             </div>
         </div>
     </div>
 
-
     <script>
-        // --- DOM Elements ---
-        const searchInput = document.getElementById('searchInput');
-        const openFilterBtn = document.getElementById('openFilterBtn');
-        const closeFilterBtn = document.getElementById('closeFilterBtn');
-        const applyAndCloseFilterBtn = document.getElementById('applyAndCloseFilterBtn');
-        const filterModal = document.getElementById('filterModal');
-        const categoryFilters = document.getElementById('categoryFilters');
-        const difficultyFilter = document.getElementById('difficultyFilter');
-        const playerFilter = document.getElementById('playerFilter');
-        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-        const gameGrid = document.getElementById('gameGrid');
-        const gameModal = document.getElementById('gameModal');
-        const modalContent = document.getElementById('modalContent');
-        const themeToggleButton = document.getElementById('theme-toggle');
-        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-        const fetchDataBtn = document.getElementById('fetchDataBtn');
-        
-        // --- App State ---
-        let allGames = [];
-        let currentFilters = { category: 'ทั้งหมด', difficulty: 'ทั้งหมด', players: 'ทั้งหมด' };
-        const G_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFTdSepLjFO5K8JwC--91QmBy8Iq4btFiNytuuOrMTlLOImjEGmxHFUwbQZLaAlgPrXw/exec';
+        document.addEventListener('DOMContentLoaded', () => {
+            const G_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxALK4v8Dfoj82xqorSFcmoOVv1Rl0ugHu40ACNkgSqo0TwqRkif4gjwNmL7DuNtdc3HA/exec';
+            const ADMIN_ACCOUNTS = [
+                { username: 'admin', password: '1234' },
+            ];
+            let boardGames = [];
 
-        // --- Theme Toggle Logic ---
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            themeToggleLightIcon.classList.remove('hidden');
-        } else {
-            document.documentElement.classList.remove('dark');
-            themeToggleDarkIcon.classList.remove('hidden');
-        }
-
-        themeToggleButton.addEventListener('click', function() {
-            themeToggleDarkIcon.classList.toggle('hidden');
-            themeToggleLightIcon.classList.toggle('hidden');
-            if (localStorage.getItem('color-theme')) {
-                if (localStorage.getItem('color-theme') === 'light') {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                }
-            } else {
-                if (document.documentElement.classList.contains('dark')) {
-                    document.documentElement.classList.remove('dark');
-                    localStorage.setItem('color-theme', 'light');
-                } else {
-                    document.documentElement.classList.add('dark');
-                    localStorage.setItem('color-theme', 'dark');
-                }
-            }
-        });
-
-
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', loadInitialData);
-        searchInput.addEventListener('input', applyAllFilters);
-        fetchDataBtn.addEventListener('click', () => fetchData(true));
-        
-        openFilterBtn.addEventListener('click', () => filterModal.classList.remove('hidden'));
-        closeFilterBtn.addEventListener('click', () => filterModal.classList.add('hidden'));
-        applyAndCloseFilterBtn.addEventListener('click', () => filterModal.classList.add('hidden'));
-
-        difficultyFilter.addEventListener('change', (e) => {
-            currentFilters.difficulty = e.target.value;
-            applyAllFilters();
-        });
-        playerFilter.addEventListener('change', (e) => {
-            currentFilters.players = e.target.value;
-            applyAllFilters();
-        });
-        resetFiltersBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            currentFilters = { category: 'ทั้งหมด', difficulty: 'ทั้งหมด', players: 'ทั้งหมด' };
-            renderAllFilters();
-            applyAllFilters();
-        });
-        gameModal.addEventListener('click', (e) => {
-            if (e.target === gameModal) closeModal();
-        });
-        filterModal.addEventListener('click', (e) => {
-            if (e.target === filterModal) filterModal.classList.add('hidden');
-        });
-
-        // --- Data Handling ---
-        function loadInitialData() {
-            const storedData = localStorage.getItem('boardGamesData');
-            if (storedData) {
-                try {
-                    allGames = JSON.parse(storedData);
-                    if (allGames && allGames.length > 0) renderUI();
-                    else fetchData();
-                } catch (error) {
-                    localStorage.removeItem('boardGamesData');
-                    fetchData();
-                }
-            } else {
-                fetchData();
-            }
-        }
-
-        function fetchData() {
-            Swal.fire({ title: 'กำลังโหลดข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            const callbackName = 'handleData';
-            const script = document.createElement('script');
-            script.src = `${G_SCRIPT_URL}?callback=${callbackName}`;
-            document.body.appendChild(script);
-            script.onload = () => document.body.removeChild(script);
-            script.onerror = () => {
-                 Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: 'ไม่สามารถโหลดข้อมูลได้' });
-                 document.body.removeChild(script);
+            const getEl = (id) => document.getElementById(id);
+            const homePage = getEl('home-page');
+            const adminPage = getEl('admin-page');
+            const detailsPage = getEl('details-page');
+            const gameListContainer = getEl('game-list-container');
+            const adminTableBody = getEl('admin-table-body');
+            const gameForm = getEl('game-form');
+            const formTitle = getEl('form-title');
+            const passwordPrompt = getEl('password-prompt');
+            const usernameInput = getEl('username-input');
+            const passwordInput = getEl('password-input');
+            const passwordSubmit = getEl('password-submit');
+            const passwordError = getEl('password-error');
+            const adminContent = getEl('admin-content');
+            const formModal = getEl('form-modal');
+            const formModalClose = getEl('form-modal-close');
+            const cancelEditBtn = getEl('cancel-edit');
+            const goToAdminBtn = getEl('go-to-admin-btn');
+            const goToHomeFromAdminBtn = getEl('go-to-home-from-admin');
+            const goToHomeFromDetailsBtn = getEl('go-to-home-from-details');
+            const logoutBtn = getEl('logout-btn');
+            const showAddFormBtn = getEl('show-add-form-btn');
+            const searchInput = getEl('search-input');
+            const adminSearchInput = getEl('admin-search-input');
+            const forceSaveBtn = getEl('force-save-to-sheet');
+            const categorySelect = getEl('category-select');
+            const categoryCustomWrapper = getEl('category-custom-wrapper');
+            const categoryCustomInput = getEl('category-custom-input');
+            const filterCategory = getEl('filter-category');
+            const filterDifficulty = getEl('filter-difficulty');
+            const filterPlayers = getEl('filter-players');
+            
+            const showPage = (pageId) => {
+                homePage.classList.add('hidden');
+                adminPage.classList.add('hidden');
+                detailsPage.classList.add('hidden');
+                getEl(pageId).classList.remove('hidden');
             };
-        }
 
-        window.handleData = (data) => {
-            if (data && data.status === "success") {
-                allGames = data.data;
-                localStorage.setItem('boardGamesData', JSON.stringify(allGames));
-                renderUI();
-                Swal.fire({ icon: 'success', title: 'โหลดข้อมูลสำเร็จ!', showConfirmButton: false, timer: 1500 });
-            } else {
-                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: data.message || 'ประมวลผลข้อมูลไม่ได้' });
-            }
-        };
+            const saveToLocalStorage = () => localStorage.setItem('boardGames', JSON.stringify(boardGames));
+            const loadFromLocalStorage = () => { boardGames = JSON.parse(localStorage.getItem('boardGames')) || []; };
 
-        // --- Rendering ---
-        function renderUI() {
-            renderAllFilters();
-            applyAllFilters();
-        }
-
-        function getDifficultyHTML(difficulty) {
-            const difficultyText = difficulty || '-';
-            switch (String(difficulty).trim()) {
-                case 'ง่าย': return `<span class="font-semibold text-green-500">${difficultyText}</span>`;
-                case 'ปานกลาง': return `<span class="font-semibold text-orange-500">${difficultyText}</span>`;
-                case 'ยาก': return `<span class="font-semibold text-red-500">${difficultyText}</span>`;
-                default: return `<span class="text-gray-500 dark:text-gray-400">${difficultyText}</span>`;
-            }
-        }
-        
-        function getMaxPlayers(range) {
-            if (!range) return null;
-            const rangeStr = String(range).trim();
-            if (rangeStr.includes('+')) {
-                return rangeStr;
-            }
-            if (rangeStr.includes('-')) {
-                return parseInt(rangeStr.split('-')[1], 10);
-            }
-            const num = parseInt(rangeStr, 10);
-            return isNaN(num) ? null : num;
-        }
-
-        // --- Filter Logic ---
-        function applyAllFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            let filteredGames = allGames;
-
-            if (searchTerm) {
-                filteredGames = filteredGames.filter(game => (game['บอร์ดเกม'] || '').toLowerCase().includes(searchTerm));
-            }
-            if (currentFilters.category !== 'ทั้งหมด') {
-                filteredGames = filteredGames.filter(game => game['หมวดหมู่'] === currentFilters.category);
-            }
-            if (currentFilters.difficulty !== 'ทั้งหมด') {
-                filteredGames = filteredGames.filter(game => game['ความยาก'] === currentFilters.difficulty);
-            }
-            if (currentFilters.players !== 'ทั้งหมด') {
-                filteredGames = filteredGames.filter(game => {
-                    const maxPlayers = getMaxPlayers(game['จำนวนผู้เล่น']);
-                    return String(maxPlayers) === currentFilters.players;
+            const sortBoardGames = () => {
+                boardGames.sort((a, b) => {
+                    const nameA = (a.name || "").trim();
+                    const nameB = (b.name || "").trim();
+                    const getGroup = (name) => {
+                        if (/^[0-9]/.test(name)) return 1;
+                        if (/^[A-Za-z]/.test(name)) return 2;
+                        if (/[\u0E00-\u0E7F]/.test(name)) return 3;
+                        return 4;
+                    };
+                    const groupA = getGroup(nameA);
+                    const groupB = getGroup(nameB);
+                    if (groupA !== groupB) return groupA - groupB;
+                    if (groupA === 3) {
+                        const stripThaiVowels = (str) => str.replace(/[\u0E30-\u0E3A\u0E40-\u0E4E]/g, '');
+                        const strippedA = stripThaiVowels(nameA);
+                        const strippedB = stripThaiVowels(nameB);
+                        const consonantCompare = strippedA.localeCompare(strippedB, 'th');
+                        if (consonantCompare !== 0) return consonantCompare;
+                    }
+                    return nameA.localeCompare(nameB);
                 });
-            }
-            
-            renderGameCards(filteredGames);
-            updateActiveCategoryButton();
-        }
+            };
 
-        function renderAllFilters() {
-            const categories = ['ทั้งหมด', ...new Set(allGames.map(g => g['หมวดหมู่']).filter(Boolean))];
-            categoryFilters.innerHTML = '';
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.className = 'filter-btn px-3 py-1 text-sm font-medium rounded-full transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600';
-                button.textContent = category;
-                button.dataset.category = category;
-                button.addEventListener('click', () => {
-                    currentFilters.category = category;
-                    applyAllFilters();
-                });
-                categoryFilters.appendChild(button);
-            });
-            updateActiveCategoryButton();
+            const getDifficultyClass = (difficulty) => {
+                const d = (difficulty || '').toLowerCase();
+                if (d.includes('ง่าย')) return 'text-green-500';
+                if (d.includes('ปานกลาง')) return 'text-orange-500';
+                if (d.includes('ยาก')) return 'text-red-500';
+                return 'text-gray-500';
+            };
 
-            const difficulties = ['ทั้งหมด', 'ง่าย', 'ปานกลาง', 'ยาก'];
-            difficultyFilter.innerHTML = difficulties.map(d => `<option value="${d}">${d === 'ทั้งหมด' ? 'ความยากทั้งหมด' : d}</option>`).join('');
-            difficultyFilter.value = currentFilters.difficulty;
-
-            const playerOptions = new Set();
-            allGames.forEach(game => {
-                const max = getMaxPlayers(game['จำนวนผู้เล่น']);
-                if (max !== null) playerOptions.add(max);
-            });
-            const sortedPlayers = Array.from(playerOptions).sort((a, b) => {
-                const numA = parseInt(a, 10);
-                const numB = parseInt(b, 10);
-                if (numA !== numB) return numA - numB;
-                return String(a).localeCompare(String(b));
-            });
-            playerFilter.innerHTML = '<option value="ทั้งหมด">ผู้เล่นทั้งหมด</option>' + sortedPlayers.map(p => `<option value="${p}">${p} คน</option>`).join('');
-            playerFilter.value = currentFilters.players;
-        }
-        
-        function updateActiveCategoryButton() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.dataset.category === currentFilters.category) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
+            const renderGameCards = (gamesToRender = boardGames) => {
+                gameListContainer.innerHTML = '';
+                if (gamesToRender.length === 0) {
+                    gameListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">ไม่พบเกมที่ค้นหา หรือยังไม่มีข้อมูลเกม</p>`;
+                    return;
                 }
-            });
-        }
+                gamesToRender.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition duration-300 cursor-pointer flex flex-col';
+                    card.dataset.gameName = game.name;
+                    const coverImage = (game.image && game.image.length > 0) ? game.image[0] : `https://placehold.co/400x250/f97316/ffffff?text=${encodeURIComponent(game.name)}`;
+                    const difficultyClass = getDifficultyClass(game.difficulty);
+                    card.innerHTML = `<img src="${coverImage}" alt="${game.name}" class="w-full h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/f97316/ffffff?text=Image+Error';"><div class="p-4 flex flex-col flex-grow"><h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${game.name}</h3><span class="text-violet-700 font-medium self-start mb-3">${game.category || 'ทั่วไป'}</span><div class="flex justify-between items-end text-sm mt-auto"><div class="space-y-1 text-gray-600"><div class="flex items-center gap-2"><i class="fas fa-users text-gray-500 w-4 text-center"></i><span>${game.players || 'N/A'}</span></div></div><div class="text-right"><strong class="${difficultyClass} font-semibold">${game.difficulty || 'N/A'}</strong></div></div></div>`;
+                    gameListContainer.appendChild(card);
+                });
+            };
 
-        function renderGameCards(gamesToRender) {
-            gameGrid.innerHTML = '';
-            if (!gamesToRender || gamesToRender.length === 0) {
-                gameGrid.innerHTML = `<p class="text-gray-500 dark:text-gray-400 col-span-full text-center py-10">ไม่พบรายการบอร์ดเกมที่ตรงกัน</p>`;
-                return;
-            }
-
-            gamesToRender.forEach(game => {
-                const name = game['บอร์ดเกม'] || 'ไม่มีชื่อ';
-                const category = game['หมวดหมู่'] || 'ไม่มีหมวดหมู่';
-                const players = game['จำนวนผู้เล่น'] || '-';
-                const difficulty = game['ความยาก']; 
-                const imageUrl = game['รูปภาพ'] || 'https://placehold.co/600x400/e0f2f1/333?text=No+Image';
-
-                const card = document.createElement('div');
-                card.className = 'card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer';
-                card.addEventListener('click', () => openModal(game));
-
-                const img = document.createElement('img');
-                img.className = 'w-full h-60 object-cover';
-                img.src = imageUrl;
-                img.alt = `ภาพปกเกม ${name}`;
-                img.onerror = function() { this.onerror = null; this.src = 'https://placehold.co/600x400/e0f2f1/333?text=Error'; };
-
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'p-5';
-
-                const h3 = document.createElement('h3');
-                h3.className = 'font-bold text-lg truncate text-color-primary text-gray-800';
-                h3.textContent = name;
-
-                const pCategory = document.createElement('p');
-                pCategory.className = 'text-sm text-color-secondary text-gray-600 mt-1';
-                pCategory.innerHTML = `หมวดหมู่: <span class="font-semibold text-blue-600">${category}</span>`;
-
-                const detailsDiv = document.createElement('div');
-                detailsDiv.className = 'flex justify-between items-center mt-2 text-sm text-color-secondary text-gray-500';
-
-                const spanPlayers = document.createElement('span');
-                spanPlayers.innerHTML = `<svg class="w-5 h-5 inline-block -mt-1 mr-1 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg> ${players}`;
-
-                const spanDifficulty = document.createElement('span');
-                spanDifficulty.innerHTML = `ความยาก: ${getDifficultyHTML(difficulty)}`;
-
-                detailsDiv.appendChild(spanPlayers);
-                detailsDiv.appendChild(spanDifficulty);
-                contentDiv.appendChild(h3);
-                contentDiv.appendChild(pCategory);
-                contentDiv.appendChild(detailsDiv);
-                card.appendChild(img);
-                card.appendChild(contentDiv);
-                gameGrid.appendChild(card);
-            });
-        }
-
-        // --- Modal ---
-        function openModal(game) {
-            const name = game['บอร์ดเกม'];
-            const players = game['จำนวนผู้เล่น'];
-            const difficulty = game['ความยาก'];
-            const location = game['ที่อยู่'];
-            const description = game['คำอธิบาย'];
-            const videoUrl = game['วิดีโอการเล่น'];
+            const renderAdminTable = (gamesToRender = boardGames) => {
+                adminTableBody.innerHTML = '';
+                 if (gamesToRender.length === 0) {
+                    adminTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">ไม่พบข้อมูลเกม</td></tr>`;
+                    return;
+                }
+                gamesToRender.forEach(game => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap">${game.name}</td><td class="px-6 py-4 whitespace-nowrap">${game.category || ''}</td><td class="px-6 py-4 whitespace-nowrap"><span class="${getDifficultyClass(game.difficulty)}">${game.difficulty}</span></td><td class="px-6 py-4 whitespace-nowrap">${game.players}</td><td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"><button data-game-name="${game.name}" class="edit-btn text-indigo-600 hover:text-indigo-800 mr-4">แก้ไข</button><button data-game-name="${game.name}" class="delete-btn text-red-500 hover:text-red-700">ลบ</button></td>`;
+                    adminTableBody.appendChild(row);
+                });
+            };
             
-            const coverImage = game['รูปภาพ'];
-            const galleryImagesStr = game['รูปภาพเพิ่มเติม'];
-            let allImages = [];
-            if (coverImage) {
-                allImages.push(coverImage);
-            }
-            if (galleryImagesStr) {
-                const additionalImages = galleryImagesStr.split(',').map(url => url.trim()).filter(url => url);
-                allImages.push(...additionalImages);
-            }
-            
-            let galleryHTML = '';
-            if (allImages.length > 0) {
-                galleryHTML = `
-                    <div class="mb-6">
-                        <h3 class="font-semibold text-xl text-color-primary text-gray-700 mb-2">รูปภาพ</h3>
-                        <img id="galleryMainImage" src="${allImages[0]}" alt="ภาพเกม" class="w-full h-auto rounded-lg shadow-lg mb-3 object-contain max-h-[50vh]">
-                `;
+            const updateCategoryDropdown = () => {
+                const existingValue = categorySelect.value;
+                categorySelect.innerHTML = '<option value="">-- เลือกหมวดหมู่ --</option>';
+                const uniqueCategories = [...new Set(boardGames.map(game => game.category).filter(cat => cat))];
+                uniqueCategories.sort((a,b) => a.localeCompare(b, 'th'));
+                uniqueCategories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    categorySelect.appendChild(option);
+                });
+                categorySelect.innerHTML += '<option value="อื่นๆ">อื่นๆ...</option>';
+                categorySelect.value = existingValue;
+            };
 
-                if (allImages.length > 1) {
-                    galleryHTML += `<div id="galleryThumbnails" class="flex flex-wrap gap-2 justify-center">`;
-                    allImages.forEach((imgUrl, index) => {
-                        galleryHTML += `
-                            <img src="${imgUrl}" class="gallery-thumbnail w-20 h-20 rounded-md object-cover cursor-pointer border-2 ${index === 0 ? 'border-blue-500' : 'border-transparent'}" onclick="updateMainImage(this, '${imgUrl}')">
-                        `;
+            const populateFilters = () => {
+                const uniqueCategories = [...new Set(boardGames.map(g => g.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'th'));
+                filterCategory.innerHTML = '<option value="">หมวดหมู่ทั้งหมด</option>';
+                uniqueCategories.forEach(cat => filterCategory.innerHTML += `<option value="${cat}">${cat}</option>`);
+
+                const uniqueDifficulties = [...new Set(boardGames.map(g => g.difficulty).filter(Boolean))].sort();
+                filterDifficulty.innerHTML = '<option value="">ความยากทั้งหมด</option>';
+                uniqueDifficulties.forEach(diff => filterDifficulty.innerHTML += `<option value="${diff}">${diff}</option>`);
+            };
+
+            const applyFilters = () => {
+                const category = filterCategory.value;
+                const difficulty = filterDifficulty.value;
+                const maxPlayers = parseInt(filterPlayers.value, 10);
+                const searchTerm = searchInput.value.toLowerCase();
+
+                const getMaxPlayers = (playerString) => {
+                    if (!playerString) return 0;
+                    const numbers = playerString.match(/\d+/g);
+                    if (!numbers) return 0;
+                    return Math.max(...numbers.map(Number));
+                };
+
+                const filtered = boardGames.filter(game => {
+                    const categoryMatch = !category || game.category === category;
+                    const difficultyMatch = !difficulty || game.difficulty === difficulty;
+                    const playerMatch = !maxPlayers || (game.players && getMaxPlayers(game.players) >= maxPlayers);
+                    const searchMatch = !searchTerm || game.name.toLowerCase().includes(searchTerm);
+                    return categoryMatch && difficultyMatch && playerMatch && searchMatch;
+                });
+                renderGameCards(filtered);
+            };
+
+            const refreshUI = () => {
+                sortBoardGames();
+                populateFilters();
+                applyFilters(); 
+                const adminSearchTerm = adminSearchInput.value.toLowerCase();
+                const filteredAdminGames = boardGames.filter(game => game.name.toLowerCase().includes(adminSearchTerm));
+                renderAdminTable(filteredAdminGames);
+                updateCategoryDropdown();
+            }
+
+            const openModal = (modal) => modal.classList.remove('hidden');
+            const closeModal = (modal) => modal.classList.add('hidden');
+
+            const showDetailsPage = (gameName) => {
+                const game = boardGames.find(g => g.name === gameName);
+                if (!game) return;
+                
+                showPage('details-page');
+                window.scrollTo(0, 0);
+
+                getEl('details-title').textContent = game.name || 'N/A';
+                getEl('details-players').innerHTML = `<i class="fas fa-users mr-2"></i> ${game.players || 'N/A'}`;
+                const difficultyEl = getEl('details-difficulty');
+                difficultyEl.textContent = game.difficulty || 'N/A';
+                difficultyEl.className = `text-xl font-bold ${getDifficultyClass(game.difficulty)}`;
+                getEl('details-category').innerHTML = `<i class="fas fa-tag mr-2"></i> ${game.category || 'N/A'}`;
+                getEl('details-language').innerHTML = `<i class="fas fa-language mr-2"></i> ${game.language || 'N/A'}`;
+                getEl('details-owner').innerHTML = `<i class="fas fa-user-check mr-2"></i> ${game.owner || 'N/A'}`;
+                getEl('details-location').innerHTML = `<i class="fas fa-box-archive mr-2"></i> ${game.location || 'N/A'}`;
+                getEl('details-description').textContent = game.description || 'ไม่มีคำอธิบาย';
+                
+                const mainImage = getEl('details-main-image');
+                const thumbnailContainer = getEl('details-thumbnail-container');
+                const galleryContainer = getEl('details-image-gallery');
+                thumbnailContainer.innerHTML = '';
+                if (game.image && Array.isArray(game.image) && game.image.length > 0) {
+                    galleryContainer.style.display = 'block';
+                    mainImage.src = game.image[0];
+                    game.image.forEach((imgUrl, index) => {
+                        const thumb = document.createElement('img');
+                        thumb.src = imgUrl;
+                        thumb.className = 'w-16 h-16 object-cover rounded-md thumbnail';
+                        if (index === 0) { thumb.classList.add('active'); }
+                        thumb.addEventListener('click', () => {
+                            mainImage.src = imgUrl;
+                            document.querySelectorAll('#details-thumbnail-container .thumbnail').forEach(t => t.classList.remove('active'));
+                            thumb.classList.add('active');
+                        });
+                        thumbnailContainer.appendChild(thumb);
                     });
-                    galleryHTML += `</div>`;
+                } else {
+                    galleryContainer.style.display = 'none';
                 }
-                galleryHTML += `</div>`;
-            }
+                const youtubeContainer = getEl('details-youtube-container');
+                const youtubePlayer = getEl('details-youtube');
+                const embedUrl = getYoutubeEmbedUrl(game.youtube);
+                if (embedUrl) {
+                    youtubePlayer.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    youtubeContainer.classList.remove('hidden');
+                } else {
+                    youtubePlayer.innerHTML = '';
+                    youtubeContainer.classList.add('hidden');
+                }
+            };
+
+            const getYoutubeEmbedUrl = (url) => {
+                if (!url) return ''; let videoId;
+                try {
+                    const urlObj = new URL(url);
+                    if (urlObj.hostname === 'youtu.be') videoId = urlObj.pathname.slice(1);
+                    else videoId = urlObj.searchParams.get('v');
+                    return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+                } catch (e) { return ''; }
+            };
+
+            const jsonpRequest = (url, callback) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                window[callbackName] = (data) => {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    if (callback) callback(data);
+                };
+                const script = document.createElement('script');
+                script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + callbackName;
+                document.body.appendChild(script);
+            };
+
+            const fetchFromSheet = () => {
+                Swal.fire({ title: 'กำลังโหลดข้อมูล...', text: 'กรุณารอสักครู่', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                jsonpRequest(`${G_SCRIPT_URL}?action=fetch`, (data) => {
+                    if (data && Array.isArray(data.data)) {
+                        boardGames = data.data;
+                        saveToLocalStorage();
+                        refreshUI();
+                        Swal.fire('สำเร็จ!', 'เรียกดูข้อมูลจาก Google Sheet เรียบร้อยแล้ว', 'success');
+                    } else {
+                         Swal.fire('ผิดพลาด!', 'ไม่สามารถโหลดข้อมูลได้ หรือข้อมูลมีรูปแบบไม่ถูกต้อง', 'error');
+                    }
+                });
+            };
+
+            const forceSaveToSheet = () => {
+                Swal.fire({ title: 'กำลัง Sync ข้อมูลทั้งหมด...', text: 'กรุณาอย่าปิดหน้านี้', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                sortBoardGames();
+                const dataString = encodeURIComponent(JSON.stringify(boardGames));
+                const url = `${G_SCRIPT_URL}?action=syncAll&data=${dataString}`;
+                jsonpRequest(url, (response) => {
+                    if (response.status === 'success') {
+                        Swal.fire('สำเร็จ!', 'Sync ข้อมูลทั้งหมดลง Google Sheet เรียบร้อยแล้ว', 'success');
+                    } else {
+                        Swal.fire('ผิดพลาด!', `เกิดข้อผิดพลาดในการบันทึก: ${response.message}`, 'error');
+                    }
+                });
+            };
+
+            const updateSingleGameInSheet = (gameData, originalName) => {
+                 const dataString = encodeURIComponent(JSON.stringify(gameData));
+                 const originalNameString = encodeURIComponent(originalName);
+                 const url = `${G_SCRIPT_URL}?action=updateOne&data=${dataString}&originalName=${originalNameString}`;
+                 jsonpRequest(url);
+            };
+            const addSingleGameToSheet = (gameData) => {
+                 const dataString = encodeURIComponent(JSON.stringify(gameData));
+                 const url = `${G_SCRIPT_URL}?action=addOne&data=${dataString}`;
+                 jsonpRequest(url);
+            };
+            const deleteSingleGameFromSheet = (gameName) => {
+                 const nameString = encodeURIComponent(gameName);
+                 const url = `${G_SCRIPT_URL}?action=deleteOne&name=${nameString}`;
+                 jsonpRequest(url);
+            };
+
+            const handleFormSubmit = (e) => {
+                e.preventDefault();
+                const originalName = getEl('original-game-name').value;
+                const newName = getEl('name').value.trim();
+                if (!newName) { Swal.fire('ผิดพลาด!', 'กรุณาใส่ชื่อบอร์ดเกม', 'error'); return; }
+                const isEditing = originalName !== "";
+                const nameExists = boardGames.some(game => game.name.toLowerCase() === newName.toLowerCase() && (!isEditing || newName.toLowerCase() !== originalName.toLowerCase()));
+                if (nameExists) { Swal.fire('ชื่อซ้ำ!', 'มีบอร์ดเกมชื่อนี้อยู่ในระบบแล้ว กรุณาใช้ชื่ออื่น', 'error'); return; }
+                let categoryValue = categorySelect.value;
+                if (categoryValue === 'อื่นๆ') { categoryValue = categoryCustomInput.value.trim(); }
+                const imageUrls = getEl('image').value.split('\n').map(url => url.trim()).filter(url => url);
+                const idToKeep = isEditing ? (boardGames.find(g => g.name === originalName)?.id || crypto.randomUUID()) : crypto.randomUUID();
+                const gameData = {
+                    name: newName, category: categoryValue, difficulty: getEl('difficulty').value, players: getEl('players').value, language: getEl('language').value, owner: getEl('owner').value, location: getEl('location').value, image: imageUrls, description: getEl('description').value, youtube: getEl('youtube').value, id: idToKeep
+                };
+                if (isEditing) {
+                    const editIndex = boardGames.findIndex(g => g.name === originalName);
+                    if (editIndex !== -1) { boardGames[editIndex] = gameData; updateSingleGameInSheet(gameData, originalName); }
+                } else {
+                    boardGames.push(gameData); addSingleGameToSheet(gameData);
+                }
+                saveToLocalStorage();
+                refreshUI();
+                closeModal(formModal);
+            };
+
+            const resetForm = () => {
+                gameForm.reset();
+                getEl('original-game-name').value = '';
+                categoryCustomWrapper.classList.add('hidden');
+                categoryCustomInput.value = '';
+            };
+
+            const openFormForEdit = (gameName) => {
+                const game = boardGames.find(g => g.name === gameName);
+                if (!game) return;
+                resetForm();
+                updateCategoryDropdown();
+                getEl('original-game-name').value = game.name || '';
+                getEl('name').value = game.name || '';
+                const categoryExists = [...categorySelect.options].some(opt => opt.value === game.category);
+                if (categoryExists) {
+                    categorySelect.value = game.category;
+                    categoryCustomWrapper.classList.add('hidden');
+                } else {
+                    categorySelect.value = 'อื่นๆ';
+                    categoryCustomInput.value = game.category || '';
+                    categoryCustomWrapper.classList.remove('hidden');
+                }
+                getEl('difficulty').value = game.difficulty || '';
+                getEl('players').value = game.players || '';
+                getEl('language').value = game.language || '';
+                getEl('owner').value = game.owner || '';
+                getEl('location').value = game.location || '';
+                getEl('image').value = (game.image && Array.isArray(game.image)) ? game.image.join('\n') : '';
+                getEl('description').value = game.description || '';
+                getEl('youtube').value = game.youtube || '';
+                formTitle.textContent = `แก้ไข: ${game.name}`;
+                openModal(formModal);
+            };
             
-            const embedUrl = convertToEmbedUrl(videoUrl);
+            const openFormForAdd = () => {
+                resetForm();
+                updateCategoryDropdown();
+                formTitle.textContent = 'เพิ่มบอร์ดเกมใหม่';
+                openModal(formModal);
+            };
 
-            modalContent.innerHTML = `
-                <div class="p-5 md:p-8">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-3xl font-bold text-color-primary text-gray-800">${name}</h2>
-                        <button onclick="closeModal()" class="text-gray-500 hover:text-red-500 text-3xl">×</button>
-                    </div>
-
-                    ${galleryHTML}
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="info-box bg-yellow-100 p-4 rounded-lg text-center">
-                            <div class="text-yellow-600 dark:text-yellow-500 mb-1">
-                                <svg class="w-8 h-8 mx-auto" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
-                            </div>
-                            <div class="font-semibold text-color-primary text-gray-800">จำนวนผู้เล่น</div>
-                            <div class="text-color-secondary text-gray-600">${players}</div>
-                        </div>
-                        <div class="info-box bg-green-100 p-4 rounded-lg text-center">
-                            <div class="font-semibold mb-2 text-color-primary text-gray-800">ความยาก</div>
-                            <div class="text-xl">${getDifficultyHTML(difficulty)}</div>
-                        </div>
-                        <div class="info-box bg-pink-100 p-4 rounded-lg text-center">
-                            <div class="text-2xl mb-1">📍</div>
-                            <div class="font-semibold text-color-primary text-gray-800">ที่อยู่</div>
-                            <div class="text-color-secondary text-gray-600">${location}</div>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div><h3 class="font-semibold text-xl text-color-primary text-gray-700 mb-2">คำอธิบายเกม</h3><p class="text-color-secondary text-gray-600 whitespace-pre-wrap">${description || 'ไม่มีคำอธิบาย'}</p></div>
-                        ${embedUrl ? `<div><h3 class="font-semibold text-xl text-color-primary text-gray-700 mb-2">วิดีโอแนะนำการเล่น</h3><div class="modal-video rounded-lg overflow-hidden shadow-lg"><iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>` : ''}
-                    </div>
-                </div>
-            `;
-            gameModal.classList.remove('hidden');
-            gameModal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function updateMainImage(selectedThumbnail, imageUrl) {
-            document.getElementById('galleryMainImage').src = imageUrl;
-            document.querySelectorAll('.gallery-thumbnail').forEach(thumb => {
-                thumb.classList.remove('border-blue-500');
-                thumb.classList.add('border-transparent');
-            });
-            selectedThumbnail.classList.add('border-blue-500');
-            selectedThumbnail.classList.remove('border-transparent');
-        }
-
-        function closeModal() {
-            modalContent.innerHTML = '';
-            gameModal.classList.add('hidden');
-            gameModal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-
-        function convertToEmbedUrl(url) {
-            if (!url) return null;
-            let videoId = null;
-            try {
-                if (url.includes('youtube.com/watch?v=')) {
-                    videoId = new URL(url).searchParams.get('v');
-                } else if (url.includes('youtu.be/')) {
-                    videoId = new URL(url).pathname.split('/').pop();
+            // --- EVENT LISTENERS ---
+            goToAdminBtn.addEventListener('click', () => showPage('admin-page'));
+            goToHomeFromAdminBtn.addEventListener('click', () => showPage('home-page'));
+            goToHomeFromDetailsBtn.addEventListener('click', () => showPage('home-page'));
+            
+            gameListContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('[data-game-name]');
+                if (card) {
+                    showDetailsPage(card.dataset.gameName);
                 }
-            } catch (error) {
-                console.error("Error parsing video URL:", error);
-                return null;
-            }
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-        }
+            });
+            
+            formModalClose.addEventListener('click', () => closeModal(formModal));
+            cancelEditBtn.addEventListener('click', () => closeModal(formModal));
+
+            logoutBtn.addEventListener('click', () => {
+                adminContent.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                passwordPrompt.classList.remove('hidden');
+                usernameInput.value = '';
+                passwordInput.value = '';
+            });
+
+            passwordSubmit.addEventListener('click', () => {
+                const isValid = ADMIN_ACCOUNTS.some(account => 
+                    account.username === usernameInput.value && account.password === passwordInput.value
+                );
+                if (isValid) {
+                    passwordPrompt.classList.add('hidden');
+                    adminContent.classList.remove('hidden');
+                    logoutBtn.classList.remove('hidden');
+                } else {
+                    passwordError.classList.remove('hidden');
+                }
+            });
+            
+            showAddFormBtn.addEventListener('click', openFormForAdd);
+
+            categorySelect.addEventListener('change', () => {
+                if (categorySelect.value === 'อื่นๆ') {
+                    categoryCustomWrapper.classList.remove('hidden');
+                } else {
+                    categoryCustomWrapper.classList.add('hidden');
+                }
+            });
+
+            [filterCategory, filterDifficulty, filterPlayers, searchInput].forEach(el => {
+                el.addEventListener('input', applyFilters);
+            });
+            
+            adminSearchInput.addEventListener('input', () => {
+                const searchTerm = adminSearchInput.value.toLowerCase();
+                const filteredAdminGames = boardGames.filter(game => game.name.toLowerCase().includes(searchTerm));
+                renderAdminTable(filteredAdminGames);
+            });
+
+            getEl('fetch-data-home').addEventListener('click', fetchFromSheet);
+            getEl('fetch-from-sheet-admin').addEventListener('click', fetchFromSheet);
+            forceSaveBtn.addEventListener('click', forceSaveToSheet);
+
+            gameForm.addEventListener('submit', handleFormSubmit);
+
+            adminTableBody.addEventListener('click', (e) => {
+                const target = e.target.closest('button[data-game-name]');
+                if (!target) return;
+                const gameName = target.dataset.gameName;
+                if (target.classList.contains('edit-btn')) {
+                    openFormForEdit(gameName);
+                }
+                if (target.classList.contains('delete-btn')) {
+                    const gameIndex = boardGames.findIndex(g => g.name === gameName);
+                    if (gameIndex === -1) return;
+                    Swal.fire({
+                        title: 'คุณแน่ใจหรือไม่?', text: `คุณต้องการลบเกม "${boardGames[gameIndex].name}" ใช่ไหม?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6', confirmButtonText: 'ใช่, ลบเลย!', cancelButtonText: 'ยกเลิก'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const deletedGameName = boardGames[gameIndex].name;
+                            boardGames.splice(gameIndex, 1);
+                            saveToLocalStorage();
+                            refreshUI();
+                            deleteSingleGameFromSheet(deletedGameName);
+                            Swal.fire('ลบแล้ว!', 'ข้อมูลเกมถูกลบออกแล้ว', 'success');
+                        }
+                    });
+                }
+            });
+
+            // --- INITIALIZATION ---
+            fetchFromSheet();
+            showPage('home-page');
+        });
     </script>
 </body>
 </html>
