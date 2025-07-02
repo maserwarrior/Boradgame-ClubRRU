@@ -425,39 +425,50 @@
                 getEl('details-location').innerHTML = `<i class="fas fa-box-archive mr-2"></i> ${game.location || 'N/A'}`;
                 getEl('details-description').textContent = game.description || 'ไม่มีคำอธิบาย';
                 
+                if (imageSliderInterval) clearInterval(imageSliderInterval); // หยุดสไลด์โชว์เก่าก่อน
                 const mainImage = getEl('details-main-image');
                 const thumbnailContainer = getEl('details-thumbnail-container');
                 const galleryContainer = getEl('details-image-gallery');
                 thumbnailContainer.innerHTML = '';
                 if (game.image && Array.isArray(game.image) && game.image.length > 0) {
                     galleryContainer.style.display = 'block';
-                    mainImage.src = game.image[0];
+                    let currentIndex = 0;
+
+                    const updateSlider = (index) => {
+                        currentIndex = index;
+                        mainImage.src = game.image[currentIndex];
+                        document.querySelectorAll('#details-thumbnail-container .thumbnail').forEach((thumb, idx) => {
+                        thumb.classList.toggle('active', idx === currentIndex);
+                        });
+                    };
+
+                    const startSlider = () => {
+                        if (game.image.length > 1) {
+                            imageSliderInterval = setInterval(() => {
+                                updateSlider((currentIndex + 1) % game.image.length);
+                            }, 3000); // เปลี่ยนรูปทุกๆ 3 วินาที
+                        }
+                    };
+    
+                    updateSlider(currentIndex); // แสดงรูปแรก
+
                     game.image.forEach((imgUrl, index) => {
                         const thumb = document.createElement('img');
                         thumb.src = imgUrl;
                         thumb.className = 'w-16 h-16 object-cover rounded-md thumbnail';
                         if (index === 0) { thumb.classList.add('active'); }
                         thumb.addEventListener('click', () => {
-                            mainImage.src = imgUrl;
-                            document.querySelectorAll('#details-thumbnail-container .thumbnail').forEach(t => t.classList.remove('active'));
-                            thumb.classList.add('active');
+                            clearInterval(imageSliderInterval); // หยุดสไลด์อัตโนมัติเมื่อคลิก
+                            updateSlider(index);
+                            startSlider(); // เริ่มนับเวลาใหม่
                         });
                         thumbnailContainer.appendChild(thumb);
                     });
+
+                    startSlider(); // เริ่มสไลด์อัตโนมัติ
                 } else {
                     galleryContainer.style.display = 'none';
                 }
-                const youtubeContainer = getEl('details-youtube-container');
-                const youtubePlayer = getEl('details-youtube');
-                const embedUrl = getYoutubeEmbedUrl(game.youtube);
-                if (embedUrl) {
-                    youtubePlayer.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                    youtubeContainer.classList.remove('hidden');
-                } else {
-                    youtubePlayer.innerHTML = '';
-                    youtubeContainer.classList.add('hidden');
-                }
-            };
 
             const getYoutubeEmbedUrl = (url) => {
                 if (!url) return ''; let videoId;
@@ -598,6 +609,9 @@
             goToAdminBtn.addEventListener('click', () => showPage('admin-page'));
             goToHomeFromAdminBtn.addEventListener('click', () => showPage('home-page'));
             goToHomeFromDetailsBtn.addEventListener('click', () => showPage('home-page'));
+                if (imageSliderInterval) clearInterval(imageSliderInterval);
+                showPage('home-page');
+            });
             
             gameListContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('[data-game-name]');
