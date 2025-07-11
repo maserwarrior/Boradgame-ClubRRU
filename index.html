@@ -335,7 +335,8 @@
                 gameListContainer.innerHTML = '';
                 if (gamesToRender.length === 0) {
                      gameListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">ไม่พบเกมที่ค้นหา หรือยังไม่มีข้อมูลเกม</p>`;
-                } else {
+                    return;
+                }
                 gamesToRender.forEach(game => {
                     const card = document.createElement('div');
                     card.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition duration-300 cursor-pointer flex flex-col relative';
@@ -361,14 +362,14 @@
                         </div>`;
                     gameListContainer.appendChild(card);
                 });
-                }
             };
 
             const renderAdminTable = (gamesToRender = boardGames) => {
                 adminTableBody.innerHTML = '';
                  if (gamesToRender.length === 0) {
                      adminTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">ไม่พบข้อมูลเกม</td></tr>`;
-                } else {
+                    return;
+                }
                 gamesToRender.forEach(game => {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap">${game.name}</td><td class="px-6 py-4 whitespace-nowrap">${game.category || ''}</td><td class="px-6 py-4 whitespace-nowrap"><span class="${getDifficultyClass(game.difficulty)}">${game.difficulty}</span></td><td class="px-6 py-4 whitespace-nowrap">${game.players}</td><td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium"><button data-game-name="${game.name}" class="edit-btn text-indigo-600 hover:text-indigo-800 mr-4">แก้ไข</button><button data-game-name="${game.name}" class="delete-btn text-red-500 hover:text-red-700">ลบ</button></td>`;
