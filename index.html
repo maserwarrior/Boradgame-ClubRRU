@@ -230,11 +230,6 @@
                         </div>
                         <div class="md:col-span-2"><label for="description" class="block text-sm font-medium text-gray-600">คำอธิบาย</label><textarea id="description" rows="3" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></textarea></div>
                         <div class="md:col-span-2"><label for="youtube" class="block text-sm font-medium text-gray-600">ลิงก์วิดีโอ YouTube</label><input type="url" id="youtube" class="input-field bg-white mt-1 block w-full p-2 border border-gray-200 rounded-md text-gray-800"></div>
-                        <div class="md:col-span-2 flex items-center">
-                            <input id="recommended" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                            <label for="recommended" class="ml-2 block text-sm font-medium text-gray-700">แนะนำสำหรับมือใหม่</label>
-                        </div>
-                        
                     </div>
                     <div class="flex justify-end space-x-4 pt-4">
                         <button type="button" id="cancel-edit" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">ยกเลิก</button>
@@ -336,31 +331,18 @@
                     gameListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">ไม่พบเกมที่ค้นหา หรือยังไม่มีข้อมูลเกม</p>`;
                 } else {
                     gamesToRender.forEach(game => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow-md transform hover:-translate-y-1 transition duration-300 cursor-pointer flex flex-col relative overflow-hidden';
-                    card.dataset.gameName = game.name;
-                    const coverImage = (game.image && game.image.length > 0) ? game.image[0] : `https://placehold.co/400x250/f97316/ffffff?text=${encodeURIComponent(game.name)}`;
-                    const difficultyClass = getDifficultyClass(game.difficulty);
-                    const recommendedRibbon = game.recommended ? `<div class="absolute top-3 -right-12 transform rotate-45 bg-yellow-400 text-center text-black text-base font-bold py-1.5 w-36 shadow-lg">แนะนำ</div>` : '';
-                    
-                    card.innerHTML = `
-                        ${recommendedRibbon}
-                        <img src="${coverImage}" alt="${game.name}" class="w-full h-56 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/f97316/ffffff?text=Image+Error';">
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${game.name}</h3>
-                            <span class="text-violet-700 font-medium self-start mb-3">${game.category || 'ทั่วไป'}</span>
-                            <div class="flex justify-between items-end text-sm mt-auto">
-                                <div class="space-y-1 text-gray-600">
-                                    <div class="flex items-center gap-2"><i class="fas fa-users text-gray-500 w-4 text-center"></i><span>${game.players || 'N/A'}</span></div>
-                                </div>
-                                <div class="text-right">
-                                    <strong class="${difficultyClass} font-semibold">${game.difficulty || 'N/A'}</strong>
-                                </div>
-                            </div>
-                        </div>`;
-                    gameListContainer.appendChild(card);
-                });
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition duration-300 cursor-pointer flex flex-col';
+                        card.dataset.gameName = game.name;
+                        const coverImage = (game.image && game.image.length > 0) ? game.image[0] : `https://placehold.co/400x250/f97316/ffffff?text=${encodeURIComponent(game.name)}`;
+                        const difficultyClass = getDifficultyClass(game.difficulty);
+                        card.innerHTML = `<img src="${coverImage}" alt="${game.name}" class="w-full h-56 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/400x250/f97316/ffffff?text=Image+Error';"><div class="p-4 flex flex-col flex-grow"><h3 class="text-lg font-semibold text-gray-800 mb-2 flex-grow">${game.name}</h3><span class="text-violet-700 font-medium self-start mb-3">${game.category || 'ทั่วไป'}</span><div class="flex justify-between items-end text-sm mt-auto"><div class="space-y-1 text-gray-600"><div class="flex items-center gap-2"><i class="fas fa-users text-gray-500 w-4 text-center"></i><span>${game.players || 'N/A'}</span></div></div><div class="text-right"><strong class="${difficultyClass} font-semibold">${game.difficulty || 'N/A'}</strong></div></div></div>`;
+                        gameListContainer.appendChild(card);
+                    });
+                }
+                gameCountHome.textContent = gamesToRender.length;
             };
+
 
             const renderAdminTable = (gamesToRender = boardGames) => {
                 adminTableBody.innerHTML = '';
@@ -569,8 +551,7 @@
                 const imageUrls = getEl('image').value.split('\n').map(url => url.trim()).filter(url => url);
                 const idToKeep = isEditing ? (boardGames.find(g => g.name === originalName)?.id || crypto.randomUUID()) : crypto.randomUUID();
                 const gameData = {
-                    name: newName, category: categoryValue, difficulty: getEl('difficulty').value, players: getEl('players').value, language: getEl('language').value, owner: getEl('owner').value, location: getEl('location').value, image: imageUrls, description: getEl('description').value, youtube: getEl('youtube').value, id: idToKeep,
-                    recommended: getEl('recommended').checked
+                    name: newName, category: categoryValue, difficulty: getEl('difficulty').value, players: getEl('players').value, language: getEl('language').value, owner: getEl('owner').value, location: getEl('location').value, image: imageUrls, description: getEl('description').value, youtube: getEl('youtube').value, id: idToKeep
                 };
                 if (isEditing) {
                     const editIndex = boardGames.findIndex(g => g.name === originalName);
@@ -614,7 +595,6 @@
                 getEl('image').value = (game.image && Array.isArray(game.image)) ? game.image.join('\n') : '';
                 getEl('description').value = game.description || '';
                 getEl('youtube').value = game.youtube || '';
-                getEl('recommended').checked = game.recommended || false;
                 formTitle.textContent = `แก้ไข: ${game.name}`;
                 openModal(formModal);
             };
