@@ -333,6 +333,7 @@
 
             const renderGameCards = (gamesToRender = boardGames) => {
                 gameListContainer.innerHTML = '';
+                gameCountAdmin.textContent = gamesToRender.length;
                 if (gamesToRender.length === 0) {
                      gameListContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">ไม่พบเกมที่ค้นหา หรือยังไม่มีข้อมูลเกม</p>`;
                     return;
@@ -366,6 +367,7 @@
 
             const renderAdminTable = (gamesToRender = boardGames) => {
                 adminTableBody.innerHTML = '';
+                 gameCountAdmin.textContent = gamesToRender.length;
                  if (gamesToRender.length === 0) {
                      adminTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">ไม่พบข้อมูลเกม</td></tr>`;
                     return;
