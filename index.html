@@ -345,7 +345,7 @@
                     card.dataset.gameName = game.name;
                     const coverImage = (game.image && game.image.length > 0) ? game.image[0] : `https://placehold.co/400x250/f97316/ffffff?text=${encodeURIComponent(game.name)}`;
                     const difficultyClass = getDifficultyClass(game.difficulty);
-                    const recommendedRibbon = game.recommended ? `<div class="absolute top-3 -right-12 transform rotate-45 bg-yellow-400 text-center text-black text-base font-bold py-1.5 w-36 shadow-lg">แนะนำสำหรับผู้เล่นใหม่</div>` : '';
+                    const recommendedRibbon = game.recommended ? `<div class="absolute top-3 -right-12 transform rotate-45 bg-yellow-400 text-center text-black text-sm font-bold py-1.5 w-36 shadow-lg">แนะนำสำหรับผู้เล่นใหม่</div>` : '';
                     
                     card.innerHTML = `
                         ${recommendedRibbon}
